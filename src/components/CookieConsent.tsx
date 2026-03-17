@@ -145,14 +145,20 @@ export function CookieConsent({
                       <span className="cookie-confirm-result-pct">
                         {votedChoice === "jah" ? 100 : 0}%
                       </span>
-                      <span className="cookie-confirm-result-correct">õige</span>
+                      <span className="cookie-confirm-result-correct">
+                        õige
+                      </span>
                     </div>
                     <div className="cookie-confirm-btn cookie-confirm-kindlasti cookie-confirm-result-btn">
-                      <span className="cookie-confirm-result-label">Kindlasti</span>
+                      <span className="cookie-confirm-result-label">
+                        Kindlasti
+                      </span>
                       <span className="cookie-confirm-result-pct">
                         {votedChoice === "kindlasti" ? 100 : 0}%
                       </span>
-                      <span className="cookie-confirm-result-correct">õige</span>
+                      <span className="cookie-confirm-result-correct">
+                        õige
+                      </span>
                     </div>
                   </div>
                 </>

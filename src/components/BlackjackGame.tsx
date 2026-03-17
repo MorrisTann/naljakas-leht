@@ -143,6 +143,7 @@ export function BlackjackGame({ onWin, onSkipToCaptcha }: BlackjackGameProps) {
   const [laughZoomDuration, setLaughZoomDuration] = useState<number | null>(
     null,
   );
+  const [laughPlaying, setLaughPlaying] = useState(false);
   const [balance, setBalance] = useState(STARTING_BALANCE);
   const [bet, setBet] = useState<number | null>(null);
   const [deck, setDeck] = useState<Card[]>(() => shuffle(makeDeck()));
@@ -162,12 +163,17 @@ export function BlackjackGame({ onWin, onSkipToCaptcha }: BlackjackGameProps) {
     return () => clearTimeout(t);
   }, [phase, rottStep]);
 
-  useEffect(() => {
-    if (phase !== "rott" || rottStep !== 6) return;
-    playLaughSound(onSkipToCaptcha, (duration) =>
-      setLaughZoomDuration(duration),
+  const startLaugh = useCallback(() => {
+    resumeAudioContext();
+    setLaughPlaying(true);
+    playLaughSound(
+      () => {
+        setLaughPlaying(false);
+        onSkipToCaptcha();
+      },
+      (duration) => setLaughZoomDuration(duration),
     );
-  }, [phase, rottStep, onSkipToCaptcha]);
+  }, [onSkipToCaptcha]);
 
   const draw = useCallback(
     (n: number): Card[] => {
@@ -304,6 +310,16 @@ export function BlackjackGame({ onWin, onSkipToCaptcha }: BlackjackGameProps) {
             aria-hidden
             style={{ animationDuration: `${zoomSec}s` }}
           />
+          {!laughPlaying && (
+            <button
+              type="button"
+              className="bj-rott-laugh-tap"
+              onClick={startLaugh}
+              aria-label="Jätka"
+            >
+              Puudu jätkamiseks
+            </button>
+          )}
         </div>
       );
     }
@@ -354,6 +370,7 @@ export function BlackjackGame({ onWin, onSkipToCaptcha }: BlackjackGameProps) {
           type="button"
           className="bj-skip-btn"
           onClick={() => {
+            resumeAudioContext();
             setPhase("rott");
             setRottStep(0);
           }}
