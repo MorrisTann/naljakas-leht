@@ -20,7 +20,7 @@ export function Wheel({
       <div className="pointer" />
 
       {/* spinning wheel */}
-      <div className="wheel" style={{ transform: `rotate(${rotation}deg)` }}>
+      <div className="wheel" style={{ transform: `rotate(${rotation}deg) translateZ(0)` }}>
         {/* sector labels – rotate together with the wheel */}
         <div className="wheel-label wheel-label-top">{top}s</div>
         <div className="wheel-label wheel-label-right">{right}s</div>

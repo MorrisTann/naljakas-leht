@@ -7,6 +7,7 @@ import { EatCookiePhase } from "./components/EatCookiePhase";
 import { CelebrationOverlay } from "./components/CelebrationOverlay";
 import { SuccessPage } from "./components/SuccessPage";
 import { loadAdminConfig, isAdminMode } from "./lib/adminConfig";
+import { playTickSound, resumeAudioContext } from "./lib/audioUtils";
 import { AdminPanel, type FlowStepForAdmin } from "./components/AdminPanel";
 import type { AdminConfig } from "./lib/adminConfig";
 import "./App.css";
@@ -63,30 +64,9 @@ function App() {
   const frameIdRef = useRef<number | null>(null);
   const lastSectorRef = useRef<number>(0);
 
-  function playWheelTick() {
-    try {
-      const audioContext = new (window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext })
-          .webkitAudioContext)();
-      const osc = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-      osc.connect(gain);
-      gain.connect(audioContext.destination);
-      osc.frequency.value = 800;
-      osc.type = "sine";
-      gain.gain.setValueAtTime(0.15, audioContext.currentTime);
-      gain.gain.exponentialRampToValueAtTime(
-        0.001,
-        audioContext.currentTime + 0.05,
-      );
-      osc.start(audioContext.currentTime);
-      osc.stop(audioContext.currentTime + 0.05);
-    } catch {
-      /* ignore */
-    }
-  }
 
   function handleSpin() {
+    resumeAudioContext();
     if (
       isSpinning ||
       step === "celebration" ||
@@ -134,7 +114,7 @@ function App() {
       const sector = Math.floor((current - 45) / 90);
       if (sector !== lastSectorRef.current) {
         lastSectorRef.current = sector;
-        playWheelTick();
+        playTickSound();
       }
 
       setRotation(current);

@@ -100,6 +100,9 @@ h1 {
   height: min(280px, 75vmin);
   margin: 0 auto 24px;
   flex-shrink: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  contain: layout style paint;
 }
 
 /* Fixed pointer at the top, pointing down to wheel center */
@@ -139,7 +142,10 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.1s linear;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transition: transform 0.05s linear;
 }
 
 /* Labels in exact center of each sector (centroid of 90° wedge: 4r/(3π) ≈ 21.2% from center) */
@@ -742,6 +748,11 @@ button:disabled {
   color: #2ea872;
 }
 
+.cookie-confirm-btn-selected {
+  box-shadow: 0 0 0 3px #fff, 0 0 12px rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+
 .cookie-confirm-wrong {
   margin: 16px 0 0;
   font-size: 1.3rem;
@@ -870,19 +881,29 @@ button:disabled {
 .cookie-clicker-container {
   position: relative;
   min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .cookie-game-area {
   position: absolute;
-  inset: 70px 0 0 0;
+  inset: 70px 0 240px 0;
   pointer-events: none;
 }
 
-.cookie-game-area .cookie-floating-clickable {
+.cookie-game-area .cookie-big-cookie {
   pointer-events: auto;
 }
 
-.cookie-game-area .cookie-big-cookie {
+.cookie-floating-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.cookie-floating-layer .cookie-floating-clickable {
   pointer-events: auto;
 }
 
@@ -904,6 +925,7 @@ button:disabled {
   transform-origin: center;
   pointer-events: none;
 }
+
 
 .cookie-floating-clickable {
   pointer-events: auto;
@@ -939,29 +961,8 @@ button:disabled {
   flex-direction: column;
   gap: 10px;
   width: min(360px, 92vw);
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  background: rgba(30, 30, 30, 0.92);
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.cookie-clicker-drag-handle {
-  cursor: grab;
-  padding: 4px 0 8px;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
-  text-align: center;
-  user-select: none;
-  line-height: 1;
-}
-
-.cookie-clicker-drag-handle:active {
-  cursor: grabbing;
+  margin-top: auto;
+  position: relative;
 }
 
 .cookie-clicker-btn {

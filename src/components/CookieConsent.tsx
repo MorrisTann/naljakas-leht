@@ -111,7 +111,7 @@ export function CookieConsent({
         {showConfirm && (
           <div className="cookie-confirm-overlay">
             <div className="cookie-confirm-modal">
-              <h2>Kas oled ikka kindel?</h2>
+              {!countdownDone && <h2>Kas oled ikka kindel?</h2>}
               {!countdownDone ? (
                 <>
                   <p className="cookie-confirm-countdown">
@@ -120,14 +120,14 @@ export function CookieConsent({
                   <div className="cookie-confirm-buttons">
                     <button
                       type="button"
-                      className="cookie-confirm-btn cookie-confirm-jah"
+                      className={`cookie-confirm-btn cookie-confirm-jah ${votedChoice === "jah" ? "cookie-confirm-btn-selected" : ""}`}
                       onClick={() => setVotedChoice("jah")}
                     >
                       Jah
                     </button>
                     <button
                       type="button"
-                      className="cookie-confirm-btn cookie-confirm-kindlasti"
+                      className={`cookie-confirm-btn cookie-confirm-kindlasti ${votedChoice === "kindlasti" ? "cookie-confirm-btn-selected" : ""}`}
                       onClick={() => setVotedChoice("kindlasti")}
                     >
                       Kindlasti
@@ -135,7 +135,7 @@ export function CookieConsent({
                   </div>
                 </>
               ) : votedChoice ? (
-                <p className="cookie-confirm-correct">Õige vastus! ✓</p>
+                <p className="cookie-confirm-correct">Õige vastus!</p>
               ) : (
                 <>
                   <p className="cookie-confirm-wrong">Vale!</p>

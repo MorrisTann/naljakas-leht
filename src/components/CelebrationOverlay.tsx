@@ -1,36 +1,9 @@
 import { useEffect, useRef } from "react";
+import { playCelebrationSound } from "../lib/audioUtils";
 
 type CelebrationOverlayProps = {
   seconds: number;
 };
-
-function playCelebrationSound() {
-  try {
-    const ctx = new (window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext)();
-    const notes = [523.25, 659.25, 783.99, 1046.5];
-    const now = ctx.currentTime;
-    notes.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = freq;
-      osc.type = "sine";
-      gain.gain.setValueAtTime(0, now + i * 0.15);
-      gain.gain.linearRampToValueAtTime(0.2, now + i * 0.15 + 0.02);
-      gain.gain.exponentialRampToValueAtTime(
-        0.001,
-        now + i * 0.15 + 0.25,
-      );
-      osc.start(now + i * 0.15);
-      osc.stop(now + i * 0.15 + 0.25);
-    });
-  } catch {
-    /* ignore */
-  }
-}
 
 type Particle = {
   x: number;

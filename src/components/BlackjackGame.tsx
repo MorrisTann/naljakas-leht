@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import laughSound from "../assets/crowd of laughter sound effect.mp3";
+import { playCardDealSound, resumeAudioContext } from "../lib/audioUtils";
 
 type BlackjackGameProps = {
   onWin: (balance: number) => void;
@@ -58,29 +59,6 @@ function playLaughSound(onEnded?: () => void) {
     audio.play().catch(() => onEnded?.());
   } catch {
     onEnded?.();
-  }
-}
-
-function playCardSound() {
-  try {
-    const ctx = new (window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.value = 200;
-    osc.type = "sine";
-    gain.gain.setValueAtTime(0.12, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(
-      0.001,
-      ctx.currentTime + 0.08,
-    );
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.08);
-  } catch {
-    /* ignore */
   }
 }
 
@@ -166,6 +144,7 @@ export function BlackjackGame({ onWin, onSkipToCaptcha }: BlackjackGameProps) {
   );
 
   function placeBet(amount: number) {
+    resumeAudioContext();
     setBet(amount);
     setTimeout(() => {
       const freshDeck = deck.length < 10 ? shuffle(makeDeck()) : deck;
@@ -190,7 +169,7 @@ export function BlackjackGame({ onWin, onSkipToCaptcha }: BlackjackGameProps) {
       setPhase("play");
 
       for (let i = 0; i < 4; i++) {
-        setTimeout(playCardSound, i * DEAL_STAGGER_MS);
+        setTimeout(playCardDealSound, i * DEAL_STAGGER_MS);
       }
     }, 0);
   }
@@ -234,7 +213,7 @@ export function BlackjackGame({ onWin, onSkipToCaptcha }: BlackjackGameProps) {
     const step = () => {
       const { best } = bestHandValue(dealerCards);
       if (best < 17) {
-        playCardSound();
+        playCardDealSound();
         const [c] = draw(1);
         const order = dealer.length + player.length;
         setDealer((prev) => [...prev, { card: c, dealOrder: order }]);
@@ -398,7 +377,7 @@ export function BlackjackGame({ onWin, onSkipToCaptcha }: BlackjackGameProps) {
           type="button"
           onClick={() => {
             const [c] = draw(1);
-            playCardSound();
+            playCardDealSound();
             const order = dealer.length + player.length;
             setPlayer((prev) => [...prev, { card: c, dealOrder: order }]);
           }}
