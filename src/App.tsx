@@ -11,7 +11,7 @@ import { AdminPanel, type FlowStepForAdmin } from "./components/AdminPanel";
 import type { AdminConfig } from "./lib/adminConfig";
 import "./App.css";
 
-const options = [1, 3, 5, 10];
+const options = [5, 10, 30, 60];
 
 type FlowStep =
   | "idle"
@@ -185,12 +185,8 @@ function App() {
   // Intro text sequence on first load (kui showIntro)
   useEffect(() => {
     if (!adminConfig.showIntro) return;
-    const firstTimer = setTimeout(() => setIntroStep(1), 2600);
-    const secondTimer = setTimeout(() => setIntroStep(2), 5200);
-    return () => {
-      clearTimeout(firstTimer);
-      clearTimeout(secondTimer);
-    };
+    const t = setTimeout(() => setIntroStep(2), 2600);
+    return () => clearTimeout(t);
   }, [adminConfig.showIntro]);
 
   // countdown logic
@@ -237,19 +233,6 @@ function App() {
         {adminPanel}
         <div className="app">
           <h1 className="intro-text intro-text-1">Tere tulemast sõber!</h1>
-        </div>
-      </>
-    );
-  }
-
-  if (adminConfig.showIntro && introStep === 1) {
-    return (
-      <>
-        {adminPanel}
-        <div className="app">
-          <h1 className="intro-text intro-text-2 intro-big">
-            Siit tuleb content:
-          </h1>
         </div>
       </>
     );
@@ -371,8 +354,9 @@ function App() {
           isSpinning={isSpinning}
           isLoadingTime={false}
           onSpin={handleSpin}
+          options={options}
         />
-        <p>Võimalikud ajad: 1, 3, 5, 10 sekundit</p>
+        <p>Võimalikud ajad: 5, 10, 30, 60 sekundit</p>
       </div>
     </>
   );

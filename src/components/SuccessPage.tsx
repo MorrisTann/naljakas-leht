@@ -24,7 +24,7 @@ export function SuccessPage({ balance }: SuccessPageProps) {
   return (
     <div className="app success-page">
       <h1>Leht on lõpuks laaditud!</h1>
-      <p className="success-saldo">Saldo: {balance} €</p>
+      <p className="success-saldo">Saldo: {answeredJah ? 0 : balance} €</p>
       {showDonationQuestion && (
         <>
           <p className="success-donation-question">

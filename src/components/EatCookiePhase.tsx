@@ -84,8 +84,51 @@ export function EatCookiePhase({ onComplete, onCrash }: EatCookiePhaseProps) {
   const [crashPopups, setCrashPopups] = useState<CrashPopup[]>([]);
   const [showShutdownOverlay, setShowShutdownOverlay] = useState(false);
   const [showJatkaHint, setShowJatkaHint] = useState(false);
+  const [boxPos, setBoxPos] = useState({ x: 0, y: 0 });
+  const dragRef = useRef<{ startX: number; startY: number; startPosX: number; startPosY: number } | null>(null);
   const nextIdRef = useRef(0);
   const crashPopupIdRef = useRef(0);
+
+  const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+    dragRef.current = {
+      startX: clientX,
+      startY: clientY,
+      startPosX: boxPos.x,
+      startPosY: boxPos.y,
+    };
+  }, [boxPos]);
+
+  useEffect(() => {
+    if (!dragRef.current) return;
+    const onMove = (clientX: number, clientY: number) => {
+      const d = dragRef.current;
+      if (!d) return;
+      setBoxPos({
+        x: d.startPosX + clientX - d.startX,
+        y: d.startPosY + clientY - d.startY,
+      });
+    };
+    const handleMouseMove = (e: MouseEvent) => onMove(e.clientX, e.clientY);
+    const handleMouseUp = () => { dragRef.current = null; };
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      onMove(e.touches[0].clientX, e.touches[0].clientY);
+    };
+    const handleTouchEnd = () => { dragRef.current = null; };
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd);
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, []);
 
   useEffect(() => {
     loadSound(biteSound).catch(() => {});
@@ -257,7 +300,25 @@ export function EatCookiePhase({ onComplete, onCrash }: EatCookiePhaseProps) {
         ))}
       </div>
 
-      <div className="cookie-clicker-buttons">
+      <div
+        className="cookie-clicker-buttons"
+        style={{
+          transform: `translate(calc(-50% + ${boxPos.x}px), ${boxPos.y}px)`,
+        }}
+      >
+        <div
+          className="cookie-clicker-drag-handle"
+          onMouseDown={handleDragStart}
+          onTouchStart={handleDragStart}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") handleDragStart(e as unknown as React.MouseEvent);
+          }}
+          aria-label="Tõmba kasti liigutamiseks"
+        >
+          ⋮⋮
+        </div>
         <button
           type="button"
           className="cookie-clicker-btn"

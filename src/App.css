@@ -874,7 +874,7 @@ button:disabled {
 
 .cookie-game-area {
   position: absolute;
-  inset: 70px 0 240px 0;
+  inset: 70px 0 0 0;
   pointer-events: none;
 }
 
@@ -939,9 +939,29 @@ button:disabled {
   flex-direction: column;
   gap: 10px;
   width: min(360px, 92vw);
-  margin-top: auto;
-  position: relative;
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
+  background: rgba(30, 30, 30, 0.92);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.cookie-clicker-drag-handle {
+  cursor: grab;
+  padding: 4px 0 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  user-select: none;
+  line-height: 1;
+}
+
+.cookie-clicker-drag-handle:active {
+  cursor: grabbing;
 }
 
 .cookie-clicker-btn {

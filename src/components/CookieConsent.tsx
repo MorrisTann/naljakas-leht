@@ -140,7 +140,7 @@ export function CookieConsent({
                 <>
                   <p className="cookie-confirm-wrong">Vale!</p>
                   <p className="cookie-confirm-try-hint">
-                    Ainus variant on proovi uuesti.
+                    Ainus variant on proovida uuesti.
                   </p>
                   <button
                     type="button"
